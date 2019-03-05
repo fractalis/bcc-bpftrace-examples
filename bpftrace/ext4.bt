@@ -21,5 +21,5 @@ kprobe:ext4_readdir {
 
 kprobe:ext4_free_inode {
     $inode = ((inode *)arg1);
-    printf("ext4_free_inode (uid_t): %d\n", $inode->i_count);
+    printf("ext4_free_inode");
 }
