@@ -1,0 +1,25 @@
+#!/usr/local/bin/bpftrace
+#!/usr/bin/env bpftrace
+
+#include <linux/fs.h>
+
+struct list_element {
+    void *data;
+    struct list_element *next;
+}
+
+kprobe:ext4_readpage {
+    printf("ext4_readpage: %s\n", str(arg0));
+}
+
+kprobe:ext4_readdir {
+    $file = ((file *)arg0);
+    $inode = $file->f_inode;
+    $d_name = $file->f_path.dentry->d_name.name;
+    printf("ext4_readdir: %s\n", str($d_name));
+}
+
+kprobe:ext4_free_inode {
+    $inode = ((inode *)arg1);
+    printf("ext4_free_inode (uid_t): %d\n", $inode->i_count);
+}

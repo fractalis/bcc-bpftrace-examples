@@ -1,0 +1,29 @@
+#!/usr/local/bin/bpftrace
+#!/usr/bin/env bpftrace
+
+#include <linux/socket.h>
+#include <net/sock.h>
+
+BEGIN
+{
+    printf("Tracing tcp reads. Hit Ctrl-C to end.\n");
+    printf("%-14s %-14s %-6s\n", "SADDR", "DADDR", "LEN");
+}
+
+kprobe:tcp_read_sock {
+
+    printf("tcp_read_sock: %s\n", str(arg1));
+}
+
+kprobe:tcp_recvmsg {
+    $sk = ((sock *) arg0);
+    $inet_family = $sk->__sk_common.skc_family;
+    $af_inet = 2;
+
+    if ($inet_family == $af_inet) {
+        $daddr = $sk->__sk_common.skc_daddr;
+        $saddr = $sk->__sk_common.skc_rcv_saddr;
+    }
+
+    printf("%-14s %-14s %-6d\n", ntop($af_inet, $daddr), ntop($af_inet, $saddr), arg2);
+}

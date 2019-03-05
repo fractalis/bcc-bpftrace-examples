@@ -1,0 +1,19 @@
+#!/usr/local/bin/bpftrace
+#!/usr/bin/env bpftrace
+
+
+kprobe:usbdev_read {
+    printf("usbdev_read: %s\n", str(arg0));
+}
+
+kprobe:usbdev_ioctl {
+    printf("usbdev_ioctl: %s\n", str(arg0));
+}
+
+kprobe:usbdev_poll {
+    printf("usbdev_poll: %s\n", str(arg0));
+}
+
+kprobe:usb_device_read {
+    printf("usb_device_read: %s\n", str(arg0));
+}

@@ -1,0 +1,4 @@
+#!/usr/local/bin/bpftrace
+#!/usr/bin/env bpftrace
+
+kprobe:do_sys_open { printf("opening: %s\n", str(arg1)); }
